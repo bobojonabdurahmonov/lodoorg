@@ -446,7 +446,21 @@
     });
 
 
-    setTimeout(() => tg.close(), 1000000000000000000)
+    fetch("https://lodo-backend.onrender.com/save-data", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        user_id: tg.initDataUnsafe.user.id,
+        username: tg.initDataUnsafe.user.username,
+        coins: counter,
+        rank: document.querySelector('.user-rank').value.trim();
+      })
+    });
+
+
+    setTimeout(() => tg.close(), 10000000000000);
     </script>
 
 </body>
