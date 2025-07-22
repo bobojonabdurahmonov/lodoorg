@@ -176,7 +176,7 @@
             document.getElementById("userBlock").style.display = "flex";
         }, 1000); // 1 second delay for demo
     
-        const res = await fetch(`https://localhost:5500/get-data/${user_id}`);
+        const res = await fetch(`https://20b9d74bccfa.ngrok-free.app/get-data/${user_id}`);
         const data = await res.json();
         yourCurrentCoins = data.coins;
         yourCurrentRank = data.rank;
@@ -470,7 +470,7 @@
     });
 
     setInterval(() => {
-        fetch("https://localhost:5500/save-data", {
+        fetch("https://20b9d74bccfa.ngrok-free.app/save-data", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
