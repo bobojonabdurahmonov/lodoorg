@@ -14,7 +14,6 @@
         <img src="./loading.png" alt="Loading...">
     </div>
     <div class="container">
-        
         <div class="top">
             <h1 class="lodotext">LODO</h1>
             <button class="user"><img src="user.jpg" alt="user"></button>
@@ -146,7 +145,7 @@
     tg.ready();
     tg.expand();
 
-    window.addEventListener('load', () => {
+    document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             document.querySelector('.Loader').style.display = 'none';
             document.querySelector('.container').style.display = 'block';
