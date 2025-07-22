@@ -150,11 +150,7 @@
             document.querySelector('.Loader').style.display = 'none';
             document.querySelector('.container').style.display = 'block';
         }, 1000);
-    });
-
-    const bgMusic = document.querySelector('#bg-music');
-
-    document.addEventListener('DOMContentLoaded', () => {
+        
         document.body.addEventListener('click', () => {
             if (bgMusic.paused) {
                 bgMusic.play().catch(e => alert("Autoplay blocked:", e));
@@ -166,6 +162,8 @@
         }, 1000); // 1 second delay for demo
     });
 
+    const bgMusic = document.querySelector('#bg-music');
+        
     const notification = document.querySelector('#notiftext');
     let notif = true;
 
@@ -178,7 +176,10 @@
         }
     });
 
-
+    const dropdownMenu = document.querySelector('#dropdownMenu');
+    const userBlock = document.querySelector('#userBlock');
+    const mainBlock = document.querySelector('.main');
+    let isOpen = false;
 
     // Optional: Click outside to close dropdown and show main block
     document.addEventListener("click", function (e) {
@@ -349,7 +350,7 @@
             counter.textContent = count;
             promoField.style.display = 'none';
             main.style.display = 'block';
-            promoInput.textContent = ' ';
+            promoInput.value = '';
             promoMessage.textContent = '';
         } else {
             promoMessage.textContent = '❌ Invalid promo code.';
@@ -426,36 +427,35 @@
         rankbar.style.display = 'none';
     }
 
+    let clickCountSinceLastSave = 0;
+
     coinimg.addEventListener('click', () => {
         count += currentBoost;
         counter.textContent = count;
+        clickCountSinceLastSave++;
 
         // +1 animation
         countnum.style.opacity = 1;
         countnum.style.top = '80px';
 
+        if (clickCountSinceLastSave >= 5) { // har 5 klikda yuboriladi
+            fetch("https://bobojonabdurahmonov.github.io/lodobackend/save-data", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    user_id: tg.initDataUnsafe.user.id,
+                    username: tg.initDataUnsafe.user.username,
+                    coins: parseInt(counter.textContent),
+                    rank: document.querySelector('.user-rank').textContent.trim()
+                })
+            });
+            clickCountSinceLastSave = 0;
+        }
+        
         setTimeout(() => {
             countnum.style.opacity = 0;
             countnum.style.top = '110px';
         }, 400);
-    });
-
-    settings.addEventListener('click', () => {
-        main.style.display = 'none';
-    });
-
-
-    fetch("https://bobojonabdurahmonov.github.io/lodobackend/save-data", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        user_id: tg.initDataUnsafe.user.id,
-        username: tg.initDataUnsafe.user.username,
-        coins: counter,
-        rank: document.querySelector('.user-rank').value.trim();
-      })
     });
 
     </script>
