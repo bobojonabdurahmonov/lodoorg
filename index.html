@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LodoCoin</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <audio id="bg-music" src="music.mp3" loop></audio>
+    <div class="Loader">
+        <h1>LODO</h1>
+        <img src="./loading.png" alt="Loading...">
+    </div>
+    <div class="container">
+        
+        <div class="top">
+            <h1 class="lodotext">LODO</h1>
+            <button class="user"><img src="user.jpg" alt="user"></button>
+            <button class="settings"><img src="setting.jpg" alt="parametr"></button>
+        </div>
+        <div class="main">
+            <div class="game">
+                <h4 class="counter">0</h4>
+                <button class="rank">Bronze></button>
+                <h1 class="countnum">+1</h1>
+                <img src="./coin.jpg" class="coinbtn">
+                <span>
+                    <p class="increase-text">Your increase : +</p>
+                    <p class="increase-index">1</p>
+                </span>
+                <button class="boostbtn">Boost</button>
+            </div>
+            <div class="bottom">
+                <button class="missionsbtn">Missions</button>
+                <button>Promo</button>
+                <button>Share</button>
+            </div>
+        </div>
+
+        <div class="rankbar">
+        <p style="cursor: pointer;" onclick="goBack()">← Back</p>
+        <div class="rank-field">
+                <div class="rank-item able">
+                    <h2>Bronze</h2>
+                    <img src="./bronzerank.jpg" alt="Bronze">
+                </div>
+                <div class="rank-item">
+                    <h2>Silver</h2>
+                    <img src="./acerank.jpg" alt="Silver">
+                </div>
+                <div class="rank-item">
+                    <h2>Gold</h2>
+                    <img src="./conquerorrank.jpg" alt="Gold">
+                </div>
+            </div>
+        </div>
+
+        <div class="setting-bar">
+            <p style="cursor: pointer;" onclick="gofromsettingBack()">← Back</p>
+            <h1>Settings</h1>
+            <div class="notifications">
+                <button>Notifications: </button>
+                <p id="notiftext">TurnOn</p>
+            </div>
+            <div class="soundonoff">
+                <button>Sound: </button>
+                <p id="soundtext">TurnOn</p>
+            </div>
+            <div id="settingp3">
+                <button>Privacy</button>
+            </div>
+            <div class="privacytext">
+                <p>All rights Reserved! Published in 2025</p>
+            </div>
+        </div>
+
+        <div class="user-block" id="userBlock">
+            <img src="user.jpg" alt="User Profile" class="user-avatar">
+            <div class="user-info">
+                <p class="user-name">Username</p>
+                <p class="user-rank">Bronze</p>
+            </div>
+            <div class="dropdown" id="dropdownMenu">
+                <ul>
+                    <li>👤 Profile</li>
+                    <li>⚙️ Settings</li>
+                    <li>🚪 Logout</li>
+                </ul>
+            </div>
+        </div>
+
+
+        <div class="missions-bar">
+            <p style="cursor: pointer;" onclick="gofrommissionBack()">← Back</p>
+            <h1>Daily Missions</h1>
+            <ul>
+                <li>Subscribe Telegram<button><a href="https://t.me/lodoorigin" style="color: white; text-decoration: none;">Complete</a></button></li>
+                <li>Reach As Rank<button class="compbtn">Complete</button></li>
+                <li>Collect 1000000 Coins<button class="checkcount">Complete</button></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="promo-bar">
+        <p style="cursor: pointer;" onclick="gofrompromoBack()">← Back</p>
+        <h1>Enter Promo Code</h1>
+        <input type="text" id="promoInput" placeholder="Enter your code...">
+        <button onclick="applyPromo()">Apply</button>
+        <p id="promoMessage"></p>
+    </div>
+
+    <div class="share-bar">
+    <p style="cursor: pointer;" onclick="gofromshareBack()">← Back</p>
+    <h1>Share with Friends</h1>
+    <p>Invite your friends and earn rewards!</p>
+
+    <input type="text" id="referralLink" value="https://t.me/lodoorigin" readonly>
+    <button onclick="copyReferral()">Copy Link</button>
+    
+    <a href="https://t.me/share/url?url=https://t.me/lodoorg_bot&text=Join%20this%20awesome%20coin%20game!" target="_blank">
+        <button class="tg-share">Share on Telegram</button>
+    </a>
+
+    <p id="copyMsg"></p>
+    </div>
+
+    <div class="boost-bar">
+    <p style="cursor: pointer;" onclick="gofromBoostBack()">← Back</p>
+    <h1>Boost Your Coins</h1>
+    <p>Select a boost to multiply your coin earnings!</p>
+
+    <div class="boost-options">
+        <div class="boost-card" onclick="activateBoost(2, this)">🔋 x2 Boost</div>
+        <div class="boost-card" onclick="activateBoost(5, this)">🚀 x5 Boost</div>
+        <div class="boost-card" onclick="activateBoost(10, this)">🔥 x10 Boost</div>
+    </div>
+
+    <p class="active-boost-text" id="activeBoostText">No boost activated</p>
+    </div>
+    
+    <script>
+    const tg = window.Telegram.WebApp;
+
+    tg.ready();
+    tg.expand();
+
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            document.querySelector('.Loader').style.display = 'none';
+            document.querySelector('.container').style.display = 'block';
+        }, 1000);
+    });
+
+    const bgMusic = document.querySelector('#bg-music');
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.body.addEventListener('click', () => {
+            if (bgMusic.paused) {
+                bgMusic.play().catch(e => alert("Autoplay blocked:", e));
+            }
+        }, { once: true });
+
+        setTimeout(() => {
+            document.getElementById("userBlock").style.display = "flex";
+        }, 1000); // 1 second delay for demo
+    });
+
+    const notification = document.querySelector('#notiftext');
+    let notif = true;
+
+    document.querySelector('.notifications').addEventListener('click', () => {
+        notif = !notif
+        if (notif) {
+            notification.textContent = 'TurnOn';
+        } else {
+            notification.textContent = 'TurnOff';
+        }
+    });
+
+
+
+    // Optional: Click outside to close dropdown and show main block
+    document.addEventListener("click", function (e) {
+        if (!userBlock.contains(e.target)) {
+        dropdownMenu.style.display = "none";
+        mainBlock.style.display = "block";
+        mainBlock.classList.toggle("hidden", !isOpen);
+        }
+    });
+
+
+    const soundtxt = document.querySelector('#soundtext');
+    let soundOn = true;
+
+    document.querySelector('.soundonoff').addEventListener('click', () => {
+        soundOn = !soundOn;
+        if (soundOn) {
+            bgMusic.play(); 
+            soundtxt.textContent = 'TurnOn';
+        } else {
+            bgMusic.pause();
+            soundtxt.textContent = 'TurnOff';
+        }
+    });
+
+
+    const privacebutton = document.querySelector('#settingp3');
+    const privacytext = document.querySelector('.privacytext');
+
+    privacebutton.addEventListener('click', e => {
+        e.preventDefault();
+        privacytext.classList.toggle('show');
+    });
+
+
+    const boostBtn = document.querySelector('.boostbtn');
+    const boostBar = document.querySelector('.boost-bar');
+    const activeBoostText = document.getElementById('activeBoostText');
+    const boostbtns = document.querySelectorAll('.boost-card');
+    const increaseidx = document.querySelector('.increase-index');
+    const userinfo = document.querySelector('.user');
+    const exituser = document.querySelector('.lodotext');
+
+    const userblock = document.querySelector('#userBlock')
+
+    userinfo.addEventListener('click', () => {
+            userblock.classList.add('block');
+            main.style.display = 'none';        
+    })
+
+    exituser.addEventListener('click', () => {
+        if (userblock.classList.contains('block')) {
+            userblock.classList.remove('block');
+            main.style.display = 'block';  
+        }
+    })
+
+    document.addEventListener("click", function (e) {
+        if (!userBlock.contains(e.target)) {
+        dropdownMenu.style.display = "none";
+        mainBlock.style.display = "block";
+        }
+    });
+
+    let currentBoost = 1;
+    let boostTimer;
+
+    boostBtn.addEventListener('click', () => {
+    main.style.display = 'none';
+    boostBar.style.display = 'flex';
+    });
+
+    function gofromBoostBack() {
+    main.style.display = 'block';
+    boostBar.style.display = 'none';
+    }
+
+    function activateBoost(multiplier, el) {
+    currentBoost = multiplier;
+    activeBoostText.textContent = `✅ x${multiplier} Boost Activated`;
+    countnum.textContent = '+' + currentBoost;
+    increaseidx.textContent = currentBoost;
+    el.classList.add('disabled');
+
+    clearTimeout(boostTimer);
+    boostTimer = setTimeout(() => {
+        currentBoost = 1;
+        activeBoostText.textContent = '⏳ Boost expired';
+        el.classList.remove('disabled')
+        countnum.textContent = '+1';
+        increaseidx.textContent = '1'
+    }, 3000);
+    }
+
+
+    let coins = 0;
+    const conter = document.querySelector('.counter');
+    const coinImg = document.querySelector('.coinbtn');
+
+    coinImg.addEventListener('click', () => {
+    coins += 1 * currentBoost;
+    conter.textContent = coins;
+    });
+
+
+    // function disableBoostButtons() {
+    // const boostCards = document.querySelectorAll('.boost-card');
+    // boostCards.forEach(card => {
+    //     card.classList.add('disabled');
+    // });
+    // }
+
+    function enableBoostButtons() {
+    const boostCards = document.querySelectorAll('.boost-card');
+    boostCards.forEach(card => {
+        card.classList.remove('disabled');
+    });
+    }
+
+    const settings = document.querySelector('.settings');
+    const main = document.querySelector('.main');
+    const coinimg = document.querySelector('.coinbtn');
+    const counter = document.querySelector('.counter');
+    const countnum = document.querySelector('.countnum');
+    const rankbtn = document.querySelector('.rank');
+    const rankbar = document.querySelector('.rankbar');
+    const rankingfield = document.querySelector('.rank-field');
+    const rankitem = document.querySelectorAll('.rank-item');
+    const settingfield = document.querySelector('.setting-bar');
+    const missionfield = document.querySelector('.missions-bar');
+    const missionbtn = document.querySelector('.missionsbtn');
+
+    let count = 0;
+
+    const promoBtn = document.querySelector('.bottom button:nth-child(2)'); // Promo button
+    const promoField = document.querySelector('.promo-bar');
+    const promoInput = document.getElementById('promoInput');
+    const promoMessage = document.getElementById('promoMessage');
+
+    promoBtn.addEventListener('click', () => {
+        main.style.display = 'none';
+        promoField.style.display = 'flex';
+    });
+
+    function gofrompromoBack() {
+        main.style.display = 'block';
+        promoField.style.display = 'none';
+        promoInput.value = '';
+        promoMessage.textContent = '';
+    }
+
+    function applyPromo() {
+        const code = promoInput.value.trim().toLowerCase();
+
+        if (code === 'a19b03i') {
+            promoMessage.textContent = '🎉 Promo applied! You received 2000 coins!';
+            promoMessage.style.color = 'lime';
+            count += 2000;
+            counter.textContent = count;
+            promoField.style.display = 'none';
+            main.style.display = 'block';
+            promoInput.textContent = ' ';
+            promoMessage.textContent = '';
+        } else if (code == 'vk98dus'){
+            promoMessage.textContent = '🎉 Promo applied! You received 1000 coins!';
+            promoMessage.style.color = 'lime';
+            count += 1000;
+            counter.textContent = count;
+            promoField.style.display = 'none';
+            main.style.display = 'block';
+            promoInput.textContent = ' ';
+            promoMessage.textContent = '';
+        } else {
+            promoMessage.textContent = '❌ Invalid promo code.';
+            promoMessage.style.color = 'red';
+        }
+    }
+
+    const shareBtn = document.querySelector('.bottom button:nth-child(3)');
+    const shareBar = document.querySelector('.share-bar');
+    const copyMsg = document.getElementById('copyMsg');
+
+    shareBtn.addEventListener('click', () => {
+        main.style.display = 'none';
+        shareBar.style.display = 'flex';
+    });
+
+    function gofromshareBack() {
+        main.style.display = 'block';
+        shareBar.style.display = 'none';
+        copyMsg.textContent = '';
+    }
+
+    function copyReferral() {
+        const link = document.getElementById('referralLink');
+        link.select();
+        link.setSelectionRange(0, 99999);
+        navigator.clipboard.writeText(link.value).then(() => {
+            copyMsg.textContent = "✅ Link copied!";
+        }).catch(() => {
+            copyMsg.textContent = "❌ Failed to copy!";
+            copyMsg.style.color = 'red';
+        });
+    }
+
+    document.querySelector('.compbtn').addEventListener('click', e => {
+            e.preventDefault();
+            missionfield.style.display = 'none';
+            rankbar.style.display = 'block';
+        })
+
+    document.querySelector('.checkcount').addEventListener('click', e => {
+            e.preventDefault();
+            missionfield.style.display = 'none';
+            main.style.display = 'block';
+        })
+
+    missionbtn.addEventListener('click', () => {
+        main.style.display = 'none';
+        missionfield.style.display = 'block';
+    })
+
+    rankbtn.addEventListener('click', () => {
+        main.style.display = 'none';
+        rankbar.style.display = 'flex';
+    });
+
+    settings.addEventListener('click', () => {
+        main.style.display = 'none';
+        settingfield.style.display = 'block';
+    })
+
+    function gofromsettingBack() {
+        main.style.display = 'block';
+        settingfield.style.display = 'none';
+    }
+
+    function gofrommissionBack() {
+        main.style.display = 'block';
+        missionfield.style.display = 'none';
+    }
+
+    function goBack() {
+        main.style.display = 'block';
+        rankbar.style.display = 'none';
+    }
+
+    coinimg.addEventListener('click', () => {
+        count += currentBoost;
+        counter.textContent = count;
+
+        // +1 animation
+        countnum.style.opacity = 1;
+        countnum.style.top = '80px';
+
+        setTimeout(() => {
+            countnum.style.opacity = 0;
+            countnum.style.top = '110px';
+        }, 400);
+    });
+
+    settings.addEventListener('click', () => {
+        main.style.display = 'none';
+    });
+
+    console.log(rankitem)
+
+    tg.close();
+    </script>
+
+</body>
+</html>
