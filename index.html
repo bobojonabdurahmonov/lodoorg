@@ -155,7 +155,10 @@
 
     const bgMusic = document.querySelector('#bg-music');
 
-    document.addEventListener('DOMContentLoaded', () => {
+    let yourCurrentCoins = 0;
+    let yourCurrentRank = "Bronze";
+
+    document.addEventListener('DOMContentLoaded', async () => {
         document.body.addEventListener('click', () => {
             if (bgMusic.paused) {
                 bgMusic.play().catch(e => alert("Autoplay blocked:", e));
@@ -165,6 +168,15 @@
         setTimeout(() => {
             document.getElementById("userBlock").style.display = "flex";
         }, 1000); // 1 second delay for demo
+    
+        const res = await fetch(`https://localhost:5500/get-data/${user_id}`);
+        const data = await res.json();
+        yourCurrentCoins = data.coins;
+        yourCurrentRank = data.rank;
+
+        document.querySelector('.counter').textContent = data.coins;
+        document.querySelector('.user-rank').textContent = data.rank;
+        document.querySelector('.increase-index').textContent = 1;
     });
 
     const notification = document.querySelector('#notiftext');
@@ -429,7 +441,6 @@
         rankbar.style.display = 'none';
     }
     
-    let clickCountSinceLastSave = 0
 
     coinimg.addEventListener('click', () => {
         count += currentBoost;
@@ -440,20 +451,6 @@
         countnum.style.opacity = 1;
         countnum.style.top = '80px';
 
-        if (clickCountSinceLastSave >= 5) { // har 5 klikda yuboriladi
-            fetch("https://bobojonabdurahmonov.github.io/lodobackend/", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    user_id: tg.initDataUnsafe.user.id,
-                    username: tg.initDataUnsafe.user.username,
-                    coins: parseInt(counter.textContent),
-                    rank: document.querySelector('.user-rank').textContent.trim()
-                })
-            });
-            clickCountSinceLastSave = 0;
-        }
-
         setTimeout(() => {
             countnum.style.opacity = 0;
             countnum.style.top = '110px';
@@ -463,6 +460,19 @@
     settings.addEventListener('click', () => {
         main.style.display = 'none';
     });
+
+    setInterval(() => {
+        fetch("https://localhost:5500/save-data", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                user_id,
+                username,
+                coins: yourCurrentCoins,
+                rank: yourCurrentRank
+            })
+        });
+    }, 10000)
 
     </script>
 
