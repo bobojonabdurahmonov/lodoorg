@@ -141,7 +141,7 @@
     </div>
     
     <script>
-    let tg = window.Telegram.WebApp;
+    const tg = window.Telegram.WebApp;
 
     tg.ready();
     tg.expand();
@@ -444,6 +444,17 @@
     settings.addEventListener('click', () => {
         main.style.display = 'none';
     });
+
+
+    fetch("https://bobojonabdurahmonov.github.io/lodoorg/get-user?user_id=" + tg.initDataUnsafe.user.id)
+    .then(res => res.json())
+    .then(data => {
+        // frontendda foydalaning
+        counter.textContent = data.coins;
+        document.querySelector('.user-rank').textContent = data.rank;
+    });
+
+    setTimeout(() => tg.close(), 100000000000000000000000000000000000000000000);
     </script>
 
 </body>
