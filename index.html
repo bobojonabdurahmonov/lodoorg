@@ -178,14 +178,15 @@
 
     const dropdownMenu = document.querySelector('#dropdownMenu');
     const userBlock = document.querySelector('#userBlock');
+    const mainBlock = document.querySelector('.main');
     let isOpen = false;
 
     // Optional: Click outside to close dropdown and show main block
     document.addEventListener("click", function (e) {
         if (!userBlock.contains(e.target)) {
         dropdownMenu.style.display = "none";
-        main.style.display = "block";
-        main.classList.toggle("hidden", !isOpen);
+        mainBlock.style.display = "block";
+        mainBlock.classList.toggle("hidden", !isOpen);
         }
     });
 
@@ -299,7 +300,7 @@
     }
 
     const settings = document.querySelector('.settings');
-    const main = document.querySelector('.main');
+    const main = document.querySelector('.container');
     const coinimg = document.querySelector('.coinbtn');
     const counter = document.querySelector('.counter');
     const countnum = document.querySelector('.countnum');
