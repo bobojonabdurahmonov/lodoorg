@@ -155,6 +155,13 @@
 
     const bgMusic = document.querySelector('#bg-music');
 
+    const user_id = tg.initDataUnsafe.user?.id;
+    const username = tg.initDataUnsafe.user?.username;
+
+    if (!user_id || !username) {
+        alert("Telegram WebApp foydalanuvchi ma'lumotlarini olishda xatolik.");
+    }
+
     let yourCurrentCoins = 0;
     let yourCurrentRank = "Bronze";
 
