@@ -14,6 +14,7 @@
         <img src="./loading.png" alt="Loading...">
     </div>
     <div class="container">
+        
         <div class="top">
             <h1 class="lodotext">LODO</h1>
             <button class="user"><img src="user.jpg" alt="user"></button>
@@ -37,67 +38,69 @@
                 <button>Share</button>
             </div>
         </div>
-    <div class="rankbar">
-    <p style="cursor: pointer;" onclick="goBack()">← Back</p>
-    <div class="rank-field">
-            <div class="rank-item able">
-                <h2>Bronze</h2>
-                <img src="./bronzerank.jpg" alt="Bronze">
-            </div>
-            <div class="rank-item">
-                <h2>Silver</h2>
-                <img src="./acerank.jpg" alt="Silver">
-            </div>
-            <div class="rank-item">
-                <h2>Gold</h2>
-                <img src="./conquerorrank.jpg" alt="Gold">
-            </div>
-    </div>
-    </div>
 
-    <div class="setting-bar">
-        <p style="cursor: pointer;" onclick="gofromsettingBack()">← Back</p>
-        <h1>Settings</h1>
-        <div class="notifications">
-            <button>Notifications: </button>
-            <p id="notiftext">TurnOn</p>
+        <div class="rankbar">
+        <p style="cursor: pointer;" onclick="goBack()">← Back</p>
+        <div class="rank-field">
+                <div class="rank-item able">
+                    <h2>Bronze</h2>
+                    <img src="./bronzerank.jpg" alt="Bronze">
+                </div>
+                <div class="rank-item">
+                    <h2>Silver</h2>
+                    <img src="./acerank.jpg" alt="Silver">
+                </div>
+                <div class="rank-item">
+                    <h2>Gold</h2>
+                    <img src="./conquerorrank.jpg" alt="Gold">
+                </div>
+            </div>
         </div>
-        <div class="soundonoff">
-            <button>Sound: </button>
-            <p id="soundtext">TurnOn</p>
-        </div>
-        <div id="settingp3">
-            <button>Privacy</button>
-        </div>
-        <div class="privacytext">
-            <p>All rights Reserved! Published in 2025</p>
-        </div>
-    </div>
 
-    <div class="user-block" id="userBlock">
-        <img src="user.jpg" alt="User Profile" class="user-avatar">
-        <div class="user-info">
-            <p class="user-name">Username</p>
-            <p class="user-rank">Bronze</p>
+        <div class="setting-bar">
+            <p style="cursor: pointer;" onclick="gofromsettingBack()">← Back</p>
+            <h1>Settings</h1>
+            <div class="notifications">
+                <button>Notifications: </button>
+                <p id="notiftext">TurnOn</p>
+            </div>
+            <div class="soundonoff">
+                <button>Sound: </button>
+                <p id="soundtext">TurnOn</p>
+            </div>
+            <div id="settingp3">
+                <button>Privacy</button>
+            </div>
+            <div class="privacytext">
+                <p>All rights Reserved! Published in 2025</p>
+            </div>
         </div>
-        <div class="dropdown" id="dropdownMenu">
+
+        <div class="user-block" id="userBlock">
+            <img src="user.jpg" alt="User Profile" class="user-avatar">
+            <div class="user-info">
+                <p class="user-name">Username</p>
+                <p class="user-rank">Bronze</p>
+            </div>
+            <div class="dropdown" id="dropdownMenu">
+                <ul>
+                    <li>👤 Profile</li>
+                    <li>⚙️ Settings</li>
+                    <li>🚪 Logout</li>
+                </ul>
+            </div>
+        </div>
+
+
+        <div class="missions-bar">
+            <p style="cursor: pointer;" onclick="gofrommissionBack()">← Back</p>
+            <h1>Daily Missions</h1>
             <ul>
-                <li>👤 Profile</li>
-                <li>⚙️ Settings</li>
-                <li>🚪 Logout</li>
+                <li>Subscribe Telegram<button><a href="https://t.me/lodoorigin" style="color: white; text-decoration: none;">Complete</a></button></li>
+                <li>Reach As Rank<button class="compbtn">Complete</button></li>
+                <li>Collect 1000000 Coins<button class="checkcount">Complete</button></li>
             </ul>
         </div>
-    </div>
-
-
-    <div class="missions-bar">
-        <p style="cursor: pointer;" onclick="gofrommissionBack()">← Back</p>
-        <h1>Daily Missions</h1>
-        <ul>
-            <li>Subscribe Telegram<button><a href="https://t.me/lodoorigin" style="color: white; text-decoration: none;">Complete</a></button></li>
-            <li>Reach As Rank<button class="compbtn">Complete</button></li>
-            <li>Collect 1000000 Coins<button class="checkcount">Complete</button></li>
-        </ul>
     </div>
 
     <div class="promo-bar">
@@ -136,20 +139,23 @@
 
     <p class="active-boost-text" id="activeBoostText">No boost activated</p>
     </div>
-    </div>
     
     <script>
-    let tg = window.Telegram.WebApp;
+    const tg = window.Telegram.WebApp;
 
     tg.ready();
     tg.expand();
 
-    document.addEventListener('DOMContentLoaded', () => {
+    window.addEventListener('load', () => {
         setTimeout(() => {
             document.querySelector('.Loader').style.display = 'none';
             document.querySelector('.container').style.display = 'block';
         }, 1000);
-        
+    });
+
+    const bgMusic = document.querySelector('#bg-music');
+
+    document.addEventListener('DOMContentLoaded', () => {
         document.body.addEventListener('click', () => {
             if (bgMusic.paused) {
                 bgMusic.play().catch(e => alert("Autoplay blocked:", e));
@@ -161,8 +167,6 @@
         }, 1000); // 1 second delay for demo
     });
 
-    const bgMusic = document.querySelector('#bg-music');
-        
     const notification = document.querySelector('#notiftext');
     let notif = true;
 
@@ -183,8 +187,8 @@
     document.addEventListener("click", function (e) {
         if (!userBlock.contains(e.target)) {
         dropdownMenu.style.display = "none";
-        main.style.display = "block";
-        main.classList.toggle("hidden", !isOpen);
+        mainBlock.style.display = "block";
+        mainBlock.classList.toggle("hidden", !isOpen);
         }
     });
 
@@ -348,7 +352,7 @@
             counter.textContent = count;
             promoField.style.display = 'none';
             main.style.display = 'block';
-            promoInput.value = '';
+            promoInput.textContent = ' ';
             promoMessage.textContent = '';
         } else {
             promoMessage.textContent = '❌ Invalid promo code.';
@@ -424,8 +428,8 @@
         main.style.display = 'block';
         rankbar.style.display = 'none';
     }
-
-    let clickCountSinceLastSave = 0;
+    
+    let clickCountSinceLastSave = 0
 
     coinimg.addEventListener('click', () => {
         count += currentBoost;
@@ -437,7 +441,7 @@
         countnum.style.top = '80px';
 
         if (clickCountSinceLastSave >= 5) { // har 5 klikda yuboriladi
-            fetch("https://bobojonabdurahmonov.github.io/lodobackend/save-data", {
+            fetch("https://bobojonabdurahmonov.github.io/lodobackend/", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -449,11 +453,15 @@
             });
             clickCountSinceLastSave = 0;
         }
-        
+
         setTimeout(() => {
             countnum.style.opacity = 0;
             countnum.style.top = '110px';
         }, 400);
+    });
+
+    settings.addEventListener('click', () => {
+        main.style.display = 'none';
     });
 
     </script>
