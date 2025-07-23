@@ -155,16 +155,6 @@
 
     const bgMusic = document.querySelector('#bg-music');
 
-    const user_id = tg.initDataUnsafe.user?.id;
-    const username = tg.initDataUnsafe.user?.username;
-
-    if (!user_id || !username) {
-        alert("Telegram WebApp foydalanuvchi ma'lumotlarini olishda xatolik.");
-    }
-
-    let yourCurrentCoins = 0;
-    let yourCurrentRank = "Bronze";
-
     document.addEventListener('DOMContentLoaded', async () => {
         document.body.addEventListener('click', () => {
             if (bgMusic.paused) {
@@ -175,15 +165,6 @@
         setTimeout(() => {
             document.getElementById("userBlock").style.display = "flex";
         }, 1000); // 1 second delay for demo
-    
-        const res = await fetch(`https://20b9d74bccfa.ngrok-free.app/get-data/${user_id}`);
-        const data = await res.json();
-        yourCurrentCoins = data.coins;
-        yourCurrentRank = data.rank;
-
-        document.querySelector('.counter').textContent = data.coins;
-        document.querySelector('.user-rank').textContent = data.rank;
-        document.querySelector('.increase-index').textContent = 1;
     });
 
     const notification = document.querySelector('#notiftext');
@@ -468,19 +449,6 @@
     settings.addEventListener('click', () => {
         main.style.display = 'none';
     });
-
-    setInterval(() => {
-        fetch("https://20b9d74bccfa.ngrok-free.app/save-data", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                user_id,
-                username,
-                coins: yourCurrentCoins,
-                rank: yourCurrentRank
-            })
-        });
-    }, 10000)
 
     </script>
 
