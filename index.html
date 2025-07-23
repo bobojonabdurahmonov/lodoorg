@@ -448,6 +448,20 @@
         main.style.display = 'none';
     });
 
+    localStorage.setItem("coins", count);
+    localStorage.setItem("rank", "Bronze");
+    
+    // Olish
+    let coins = parseInt(localStorage.getItem("coins")) || 0;
+    let rank = localStorage.getItem("rank") || "Bronze";
+    
+    // O‘zgartirish (masalan, coin bosilganda):
+    coinimg.addEventListener('click', () => {
+        count += currentBoost;
+        counter.textContent = count;
+        localStorage.setItem("coins", count);  // yangilab saqlash
+    });
+
     </script>
 
 </body>
