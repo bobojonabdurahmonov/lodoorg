@@ -428,7 +428,13 @@
         main.style.display = 'block';
         rankbar.style.display = 'none';
     }
+        
+    localStorage.setItem("coins", count);
+    localStorage.setItem("rank", "Bronze");
     
+    // Olish
+    let coins = parseInt(localStorage.getItem("coins")) || 0;
+    let rank = localStorage.getItem("rank") || "Bronze";
 
     coinimg.addEventListener('click', () => {
         count += currentBoost;
@@ -442,26 +448,16 @@
             countnum.style.opacity = 0;
             countnum.style.top = '110px';
         }, 400);
+        
+        count += currentBoost;
+        counter.textContent = count;
+        localStorage.setItem("coins", count); 
     });
 
     settings.addEventListener('click', () => {
         main.style.display = 'none';
     });
-
-    localStorage.setItem("coins", count);
-    localStorage.setItem("rank", "Bronze");
-    
-    // Olish
-    let coins = parseInt(localStorage.getItem("coins")) || 0;
-    let rank = localStorage.getItem("rank") || "Bronze";
-    
-    // O‘zgartirish (masalan, coin bosilganda):
-    coinimg.addEventListener('click', () => {
-        count += currentBoost;
-        counter.textContent = count;
-        localStorage.setItem("coins", count);  // yangilab saqlash
-    });
-
+        
     </script>
 
 </body>
