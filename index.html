@@ -429,11 +429,12 @@
         rankbar.style.display = 'none';
     }
         
+
     localStorage.setItem("coins", count);
     localStorage.setItem("rank", "Bronze");
+
     
-    // Olish
-    let coins = parseInt(localStorage.getItem("coins")) || 0;
+    let tangalar = parseInt(localStorage.getItem("coins")) || 0;
     let rank = localStorage.getItem("rank") || "Bronze";
 
     coinimg.addEventListener('click', () => {
@@ -449,7 +450,6 @@
             countnum.style.top = '110px';
         }, 400);
         
-        count += currentBoost;
         counter.textContent = count;
         localStorage.setItem("coins", count); 
     });
