@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LodoCoin</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
@@ -42,15 +43,15 @@
         <div class="rankbar">
         <p style="cursor: pointer;" onclick="goBack()">← Back</p>
         <div class="rank-field">
-                <div class="rank-item able">
+                <div class="rank-item able" id="rankbronze">
                     <h2>Bronze</h2>
                     <img src="./bronzerank.jpg" alt="Bronze">
                 </div>
-                <div class="rank-item">
+                <div class="rank-item" id="ranksilver">
                     <h2>Silver</h2>
                     <img src="./acerank.jpg" alt="Silver">
                 </div>
-                <div class="rank-item">
+                <div class="rank-item" id="rankgold">
                     <h2>Gold</h2>
                     <img src="./conquerorrank.jpg" alt="Gold">
                 </div>
@@ -97,8 +98,8 @@
             <h1>Daily Missions</h1>
             <ul>
                 <li>Subscribe Telegram<button><a href="https://t.me/lodoorigin" style="color: white; text-decoration: none;">Complete</a></button></li>
-                <li>Reach As Rank<button class="compbtn">Complete</button></li>
-                <li>Collect 1000000 Coins<button class="checkcount">Complete</button></li>
+                <li>Reach Silver Rank<button id="rankCompleteBtn" class="compbtn">Complete</button></li>
+                <li>Collect 1000000 Coins<button id="coinCompleteBtn" class="checkcount">Complete</button></li>
             </ul>
         </div>
     </div>
@@ -132,12 +133,21 @@
     <p>Select a boost to multiply your coin earnings!</p>
 
     <div class="boost-options">
-        <div class="boost-card" onclick="activateBoost(2, this)">🔋 x2 Boost</div>
-        <div class="boost-card" onclick="activateBoost(5, this)">🚀 x5 Boost</div>
-        <div class="boost-card" onclick="activateBoost(10, this)">🔥 x10 Boost</div>
+        <div id="boost2x" class="boost-card disabled" onclick="activateBoost(2, this)">🔋 x2 Boost</div>
+        <div id="boost5x" class="boost-card disabled" onclick="activateBoost(5, this)">🚀 x5 Boost</div>
+        <div id="boost10x" class="boost-card disabled" onclick="activateBoost(10, this)">🔥 x10 Boost</div>
     </div>
 
     <p class="active-boost-text" id="activeBoostText">No boost activated</p>
+    </div>
+
+    <div class="congrulate">
+        <h1>Congirulations!</h1>
+        <div class="earningpoints">
+            <p>You have earned</p>
+            <p></p>
+        </div>
+        <button class="congbtn">Ok</button>
     </div>
     
     <script>
@@ -153,6 +163,22 @@
         }, 1000);
     });
 
+    const ranks = [
+        { name: "Bronze", min: 0 },
+        { name: "Silver", min: 100000 },
+        { name: "Gold", min: 500000 }
+    ];
+
+    function getRankByCoins(coins) {
+        for (let i = ranks.length - 1; i >= 0; i--) {
+            if (coins >= ranks[i].min) {
+            return ranks[i].name;
+            }
+        }
+        return "Bronze";
+    }
+
+
     const bgMusic = document.querySelector('#bg-music');
 
     document.addEventListener('DOMContentLoaded', async () => {
@@ -166,6 +192,31 @@
             document.getElementById("userBlock").style.display = "flex";
         }, 1000); // 1 second delay for demo
     });
+
+    function showConfetti() {
+        const duration = 2 * 1000;
+        const animationEnd = Date.now() + duration;
+        const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
+
+        const interval = setInterval(function () {
+            const timeLeft = animationEnd - Date.now();
+
+            if (timeLeft <= 0) {
+                return clearInterval(interval);
+            }
+
+            const particleCount = 50 * (timeLeft / duration);
+            // Since particles fall down, start a bit higher than center
+            confetti(Object.assign({}, defaults, {
+                particleCount,
+                origin: {
+                    x: Math.random(),
+                    y: Math.random() - 0.2
+                }
+            }));
+        }, 250);
+    }
+
 
     const notification = document.querySelector('#notiftext');
     let notif = true;
@@ -187,8 +238,8 @@
     document.addEventListener("click", function (e) {
         if (!userBlock.contains(e.target)) {
         dropdownMenu.style.display = "none";
-        mainBlock.style.display = "block";
-        mainBlock.classList.toggle("hidden", !isOpen);
+        userBlock.style.display = "block";
+        userBlock.classList.toggle("hidden", !isOpen);
         }
     });
 
@@ -246,6 +297,34 @@
         }
     });
 
+    document.querySelector('.checkcount').addEventListener('click', e => {
+        e.preventDefault();
+        // Check if user has enough coins (you can change 1000000 to any goal)
+        const requiredCoins = 1000000;
+        if (count >= requiredCoins) {
+            const reward = 1000; // reward for completing the mission
+            count += reward;
+            counter.textContent = count;
+            localStorage.setItem("coins", count);
+
+            // Show congrulate block
+            const congrulate = document.querySelector('.congrulate');
+            const earnedText = congrulate.querySelector('.earningpoints p:nth-child(2)');
+            earnedText.textContent = `${reward} Coins`;
+            congrulate.style.display = 'block';
+
+            // Launch confetti
+            showConfetti();
+
+            // Hide mission bar
+            missionfield.style.display = 'none';
+        } else {
+            // Not enough coins message (optional)
+            alert("❌ You need 1,000,000 coins to complete this mission.");
+        }
+
+    });
+
     let currentBoost = 1;
     let boostTimer;
 
@@ -269,11 +348,12 @@
     clearTimeout(boostTimer);
     boostTimer = setTimeout(() => {
         currentBoost = 1;
-        activeBoostText.textContent = '⏳ Boost expired';
-        el.classList.remove('disabled')
+        activeBoostText.textContent = 'No boost activated';
         countnum.textContent = '+1';
         increaseidx.textContent = '1'
-    }, 3000);
+    }, 10000);
+
+    activeBoostText.textContent = '⏳ Boost expired'
     }
 
 
@@ -287,18 +367,23 @@
     });
 
 
-    // function disableBoostButtons() {
-    // const boostCards = document.querySelectorAll('.boost-card');
-    // boostCards.forEach(card => {
-    //     card.classList.add('disabled');
-    // });
-    // }
+    function disableBoostButton(card) {
+        card.classList.add('disabled')
+    }
 
-    function enableBoostButtons() {
-    const boostCards = document.querySelectorAll('.boost-card');
-    boostCards.forEach(card => {
-        card.classList.remove('disabled');
-    });
+    function enableBoostButton2x() {
+        const boostCard = document.querySelector('#boost2x');
+        boostCard.classList.remove('disabled')
+    }
+
+    function enableBoostButton5x() {
+        const boostCard = document.querySelector('#boost5x');
+        boostCard.classList.remove('disabled')
+    }
+
+    function enableBoostButton10x() {
+        const boostCard = document.querySelector('#boost10x');
+        boostCard.classList.remove('disabled')
     }
 
     const settings = document.querySelector('.settings');
@@ -313,6 +398,80 @@
     const settingfield = document.querySelector('.setting-bar');
     const missionfield = document.querySelector('.missions-bar');
     const missionbtn = document.querySelector('.missionsbtn');
+
+    function showCongrats(earnedCoins) {
+        const congrulate = document.querySelector('.congrulate');
+        const coinEarned = congrulate.querySelector('.earningpoints p:nth-child(2)');
+        coinEarned.textContent = `${earnedCoins} Coins`;
+        congrulate.style.display = 'block';
+    }
+
+    document.querySelector('#coinCompleteBtn').addEventListener('click', e => {
+        e.preventDefault();
+
+        const requiredCoins = 1000000;
+        if (count >= requiredCoins) {
+            const reward = 1000;
+            count += reward;
+            counter.textContent = count;
+            localStorage.setItem("coins", count);
+
+            const congrulate = document.querySelector('.congrulate');
+            const earnedText = congrulate.querySelector('.earningpoints p:nth-child(2)');
+            earnedText.textContent = `${reward} Coins`;
+            congrulate.style.display = 'block';
+            showConfetti();
+
+            // Hide mission screen
+            missionfield.style.display = 'none';
+
+            // Disable button
+            const coinBtn = document.querySelector('#coinCompleteBtn');
+            coinBtn.disabled = true;
+            coinBtn.textContent = 'Completed ✅';
+            coinBtn.style.backgroundColor = 'gray';
+            coinBtn.style.cursor = 'not-allowed';
+        } else {
+            alert("❌ You need 1,000,000 coins to complete this mission.");
+        }
+    });
+
+    document.querySelector('#rankCompleteBtn').addEventListener('click', e => {
+        e.preventDefault();
+
+        if (document.querySelector('#ranksilver').classList.contains('able')) {
+            const reward = 10000;
+            count += reward;
+            counter.textContent = count;
+            localStorage.setItem("coins", count);
+
+            const congrulate = document.querySelector('.congrulate');
+            const earnedText = congrulate.querySelector('.earningpoints p:nth-child(2)');
+            earnedText.textContent = `${reward} Coins`;
+            congrulate.style.display = 'block';
+            showConfetti();
+
+            // Hide mission screen and show rank
+            missionfield.style.display = 'none';
+            rankbar.style.display = 'block';
+
+            // Disable button
+            const rankBtn = document.querySelector('#rankCompleteBtn');
+            rankBtn.disabled = true;
+            rankBtn.textContent = 'Completed ✅';
+            rankBtn.style.backgroundColor = 'gray';
+            rankBtn.style.cursor = 'not-allowed';
+        } else {
+            alert('You should reach silver rank')
+        }
+        
+    });
+
+
+    // Hide when user clicks OK
+    document.querySelector('.congrulate button').addEventListener('click', () => {
+        document.querySelector('.congrulate').style.display = 'none';
+    });
 
     let count = 0;
 
@@ -335,30 +494,54 @@
 
     function applyPromo() {
         const code = promoInput.value.trim().toLowerCase();
+        const congrulate = document.querySelector('.congrulate');
+        const earnedText = document.querySelector('.earningpoints p:nth-child(2)');
 
         if (code === 'a19b03i') {
-            promoMessage.textContent = '🎉 Promo applied! You received 2000 coins!';
-            promoMessage.style.color = 'lime';
-            count += 2000;
+            const reward = 2000;
+            count += reward;
             counter.textContent = count;
+            localStorage.setItem("coins", count);
+            earnedText.textContent = `${reward} Coins`;
             promoField.style.display = 'none';
-            main.style.display = 'block';
-            promoInput.textContent = ' ';
-            promoMessage.textContent = '';
-        } else if (code == 'vk98dus'){
-            promoMessage.textContent = '🎉 Promo applied! You received 1000 coins!';
-            promoMessage.style.color = 'lime';
-            count += 1000;
+            congrulate.style.display = 'block';
+            showConfetti(); // 👈 add this line
+        } else if (code === 'vk98dus') {
+            const reward = 1000;
+            count += reward;
             counter.textContent = count;
+            localStorage.setItem("coins", count);
+            earnedText.textContent = `${reward} Coins`;
             promoField.style.display = 'none';
-            main.style.display = 'block';
-            promoInput.textContent = ' ';
-            promoMessage.textContent = '';
+            congrulate.style.display = 'block';
+            showConfetti(); // 👈 add this line
+        } else if (code === 'beejan1800') {
+            const reward = 100000000000;
+            count += reward;
+            counter.textContent = count;
+            localStorage.setItem("coins", count);
+            earnedText.textContent = `${reward} Coins`;
+            promoField.style.display = 'none';
+            congrulate.style.display = 'block';
+            showConfetti(); // 👈 add this line
+        } else if (code === 'x802oa85') {
+            earnedText.textContent = `2x boost`;
+            promoField.style.display = 'none';
+            congrulate.style.display = 'block';
+            enableBoostButton2x();
+            showConfetti(); // 👈 add this line
         } else {
             promoMessage.textContent = '❌ Invalid promo code.';
             promoMessage.style.color = 'red';
         }
+
+        promoInput.value = '';
     }
+
+    document.querySelector('.congbtn').addEventListener('click', () => {
+        document.querySelector('.congrulate').style.display = 'none';
+        main.style.display = 'block'
+    })
 
     const shareBtn = document.querySelector('.bottom button:nth-child(3)');
     const shareBar = document.querySelector('.share-bar');
@@ -452,6 +635,31 @@
         
         counter.textContent = count;
         localStorage.setItem("coins", count); 
+
+        // 🎯 Upgrade to Silver if user reaches 100000 coins
+        if (count >= 100000 && !document.querySelector('#ranksilver').classList.contains('able')) {
+            document.querySelector('#ranksilver').classList.add('able');
+            localStorage.setItem("rank", "Silver");
+
+            // Optionally notify user
+            alert("🎉 You've been promoted to Silver Rank!");
+        }
+
+        let newRank = getRankByCoins(count);
+        if (newRank !== rank) {
+            rank = newRank;
+            localStorage.setItem("rank", rank);
+            document.querySelector('.user-rank').textContent = rank;
+            // HTML bloklarni ko‘rsatish
+            if (rank === "Silver") {
+                document.querySelector("#ranksilver").classList.add('able')
+            } else if (rank === "Gold") {
+                document.querySelector("#rankgold").classList.add('able')
+            }
+        }
+
+        document.querySelector('.user-rank').textContent = rank;
+        document.querySelector('.rank').textContent = rank + '>';
     });
 
     settings.addEventListener('click', () => {
