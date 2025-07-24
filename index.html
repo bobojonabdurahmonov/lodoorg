@@ -178,6 +178,24 @@
         return "Bronze";
     }
 
+    const user = tg.initDataUnsafe.user;
+
+    const user_id = user?.id;
+    const username = user?.username || user?.first_name || "NoName";
+
+    let yourCurrentCoins = 0
+    let yourCurrentRank = "Bronze"
+
+    function saveToBackend(coins, rank) {
+    fetch("http://localhost:8000/save-data", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id, username, coins, rank })
+    })
+    .then(res => res.json())
+    .then(data => console.log("✅ Saqlandi:", data))
+    .catch(err => console.error("❌ Xatolik:", err));
+    }
 
     const bgMusic = document.querySelector('#bg-music');
 
@@ -191,6 +209,17 @@
         setTimeout(() => {
             document.getElementById("userBlock").style.display = "flex";
         }, 1000); // 1 second delay for demo
+
+        fetch(`http://localhost:8000/get-user?user_id=${user_id}`)
+            .then(res => res.json())
+            .then(data => {
+                if (!data.error) {
+                yourCurrentCoins = data.coins;
+                yourCurrentRank = data.rank;
+                document.querySelector(".user-rank").textContent = data.rank;
+                document.querySelector(".counter").textContent = data.coins;
+                }
+            });
     });
 
     function showConfetti() {
@@ -660,6 +689,8 @@
 
         document.querySelector('.user-rank').textContent = rank;
         document.querySelector('.rank').textContent = rank + '>';
+
+        saveToBackend(yourCurrentCoins, yourCurrentRank);
     });
 
     settings.addEventListener('click', () => {
