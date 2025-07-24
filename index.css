@@ -361,7 +361,7 @@ body {
 
 .boostbtn {
     width: 100%;
-    margin-top: 280px;
+    margin-top: 110px;
     padding: 14px 0;
     font-size: 16px;
     font-weight: bold;
@@ -684,4 +684,66 @@ body {
 .main-block.hidden {
   opacity: 0;
   pointer-events: none;
+}
+
+.congrulate {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(135deg, #f9f871, #ffc947);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    border-radius: 20px;
+    padding: 40px 30px;
+    text-align: center;
+    z-index: 9999;
+    width: 80%;
+    max-width: 400px;
+    display: none; /* Hide by default, show when needed */
+    animation: fadeIn 0.6s ease;
+}
+
+.congrulate h1 {
+    font-size: 2.2rem;
+    color: #2d2d2d;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.earningpoints {
+    margin: 20px 0;
+    font-size: 1.3rem;
+    color: #444;
+}
+
+.earningpoints p:nth-child(2) {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #28a745;
+}
+
+.congrulate button {
+    background-color: #2ecc71;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    font-size: 1rem;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.congrulate button:hover {
+    background-color: #27ae60;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -60%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
 }
