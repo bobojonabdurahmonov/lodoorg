@@ -178,8 +178,6 @@
         return "Bronze";
     }
 
-    const user = tg.initDataUnsafe.user;
-
     const username = user?.username || user?.first_name || "NoName";
 
     let yourCurrentCoins = 0
@@ -188,14 +186,13 @@
     const bgMusic = document.querySelector('#bg-music');
 
 
-    // const user = window.Telegram.WebApp.initDataUnsafe?.user;
-    // if (!user || !user.id) {
-    //     console.error("❌ user_id aniqlanmadi!");
-    // } else {
-    //     console.log("✅ Telegram user ID:", user.id);
-    // }
+    const user = window.Telegram.WebApp.initDataUnsafe?.user;
+    if (!user || !user.id) {
+        console.error("❌ user_id aniqlanmadi!");
+    } else {
+        console.log("✅ Telegram user ID:", user.id);
+    }
 
-    const user_id = 123456789; // ✅ bu joyda mavjudligini tekshiring
     const url = `http://127.0.0.1:8000/get-user?user_id=${user_id}`;
 
     document.addEventListener('DOMContentLoaded', async () => {
