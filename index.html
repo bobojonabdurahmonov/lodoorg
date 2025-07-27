@@ -180,24 +180,23 @@
 
     const user = tg.initDataUnsafe.user;
 
-    const user_id = user?.id;
     const username = user?.username || user?.first_name || "NoName";
 
     let yourCurrentCoins = 0
     let yourCurrentRank = "Bronze"
 
-    function saveToBackend(coins, rank) {
-        fetch("http://localhost:5500/save-data", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ user_id, username, coins, rank })
-        })
-        .then(res => res.json())
-        .then(data => console.log("✅ Saqlandi:", data))
-        .catch(err => console.error("❌ Xatolik:", err));
-    }
-
     const bgMusic = document.querySelector('#bg-music');
+
+
+    // const user = window.Telegram.WebApp.initDataUnsafe?.user;
+    // if (!user || !user.id) {
+    //     console.error("❌ user_id aniqlanmadi!");
+    // } else {
+    //     console.log("✅ Telegram user ID:", user.id);
+    // }
+
+    const user_id = 123456789; // ✅ bu joyda mavjudligini tekshiring
+    const url = `http://127.0.0.1:8000/get-user?user_id=${user_id}`;
 
     document.addEventListener('DOMContentLoaded', async () => {
         document.body.addEventListener('click', () => {
@@ -210,7 +209,8 @@
             document.getElementById("userBlock").style.display = "flex";
         }, 1000); // 1 second delay for demo
 
-        fetch(`http://localhost:5500/get-user?user_id=${user_id}`)
+        
+        fetch(url)
             .then(res => res.json())
             .then(data => {
                 if (!data.error) {
@@ -322,7 +322,6 @@
     document.addEventListener("click", function (e) {
         if (!userBlock.contains(e.target)) {
         dropdownMenu.style.display = "none";
-        mainBlock.style.display = "block";
         }
     });
 
@@ -665,6 +664,18 @@
         counter.textContent = count;
         localStorage.setItem("coins", count); 
 
+        function saveback(coins,rank) {
+            fetch("http://127.0.0.1:8000/save-data", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ user_id, username, coins,rank })
+            })
+            .then(res => res.json())
+            .then(data => console.log("✅ Saqlandi:", data))
+            .catch(err => console.error("❌ Xatolik:", err));
+        }
+        
+
         // 🎯 Upgrade to Silver if user reaches 100000 coins
         if (count >= 100000 && !document.querySelector('#ranksilver').classList.contains('able')) {
             document.querySelector('#ranksilver').classList.add('able');
@@ -690,7 +701,7 @@
         document.querySelector('.user-rank').textContent = rank;
         document.querySelector('.rank').textContent = rank + '>';
 
-        saveToBackend(yourCurrentCoins, yourCurrentRank);
+        saveback(yourCurrentCoins,yourCurrentRank)
     });
 
     settings.addEventListener('click', () => {
