@@ -211,6 +211,7 @@
             .then(data => {
                 if (!data.error) {
                 yourCurrentCoins = data.coins;
+                coins = data.coins;
                 yourCurrentRank = data.rank;
                 document.querySelector(".user-rank").textContent = data.rank;
                 document.querySelector(".counter").textContent = data.coins;
